@@ -18,7 +18,17 @@ void s3eUniversalLinksTerminate_platform()
 { 
 }
 
-s3eResult s3eUniversalLinksTest_platform(const char* str)
+s3eResult s3eUniversalLinksHook_platform()
+{
+    return S3E_RESULT_ERROR;
+}
+
+s3eResult s3eUniversalLinksRegister_platform(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData)
+{
+    return S3E_RESULT_ERROR;
+}
+
+s3eResult s3eUniversalLinksUnRegister_platform(s3eUniversalLinksCallback cbid, s3eCallback fn)
 {
     return S3E_RESULT_ERROR;
 }

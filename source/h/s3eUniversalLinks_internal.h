@@ -42,7 +42,11 @@ void s3eUniversalLinksTerminate();
  * Platform-specific termination, implemented on each platform
  */
 void s3eUniversalLinksTerminate_platform();
-s3eResult s3eUniversalLinksTest_platform(const char* str);
+s3eResult s3eUniversalLinksHook_platform();
+
+s3eResult s3eUniversalLinksRegister_platform(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData);
+
+s3eResult s3eUniversalLinksUnRegister_platform(s3eUniversalLinksCallback cbid, s3eCallback fn);
 
 
 #endif /* !S3EUNIVERSALLINKS_INTERNAL_H */

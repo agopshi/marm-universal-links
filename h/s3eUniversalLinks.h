@@ -17,6 +17,25 @@
 #define S3E_EXT_UNIVERSALLINKS_H
 
 #include <s3eTypes.h>
+
+/**
+ * s3eUniversalLinks callbacks.
+ *
+ * @see s3eUniversalLinksRegister
+ * @see s3eUniversalLinksUnRegister
+ * @par Required Header Files
+ * s3eUniversalLinks.h
+ */
+typedef enum s3eUniversalLinksCallback
+{
+	/**
+	 * Called when the application is opened in response to a universal link.
+	 * systemData: char* url
+	 */
+	S3E_UNIVERSAL_LINKS_OPEN =  0,
+
+	S3E_UNIVERSAL_LINKS_CALLBACK_MAX
+} s3eUniversalLinksCallback;
 // \cond HIDDEN_DEFINES
 S3E_BEGIN_C_DECL
 // \endcond
@@ -27,7 +46,39 @@ S3E_BEGIN_C_DECL
  */
 s3eBool s3eUniversalLinksAvailable();
 
-s3eResult s3eUniversalLinksTest(const char* str);
+/**
+ * Hook whatever is necessary to make universal links work. Call this during app initialization.
+ * @return
+ * - #S3E_RESULT_SUCCESS if no error occurred.
+ * - #S3E_RESULT_ERROR if the operation failed.
+ */
+s3eResult s3eUniversalLinksHook();
+
+/**
+ * Register a callback.
+ *
+ * @param cbid ID of the event for which to register.
+ * @param fn callback function.
+ * @param userData Value to pass to the @e userdata parameter of @e NotifyFunc.
+ * @return
+ * - #S3E_RESULT_SUCCESS if no error occurred.
+ * - #S3E_RESULT_ERROR if the operation failed.
+ * @par Required Header Files
+ * s3eUniversalLinks.h
+ */
+s3eResult s3eUniversalLinksRegister(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData);
+
+/**
+ * Unregister a callback.
+ *
+ * @param cbid ID of the callback for which to register.
+ * @param fn Callback Function.
+ * @return
+ * - #S3E_RESULT_SUCCESS if no error occurred.
+ * - #S3E_RESULT_ERROR if the operation failed.
+ * @see s3eUniversalLinksRegister
+ */
+s3eResult s3eUniversalLinksUnRegister(s3eUniversalLinksCallback cbid, s3eCallback fn);
 
 // \cond HIDDEN_DEFINES
 S3E_END_C_DECL

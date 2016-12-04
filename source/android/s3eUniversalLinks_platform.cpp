@@ -14,7 +14,8 @@
 #include "IwDebug.h"
 
 static jobject g_Obj;
-static jmethodID g_s3eUniversalLinksTest;
+//static jmethodID g_s3eUniversalLinksRegister;
+//static jmethodID g_s3eUniversalLinksUnRegister;
 
 s3eResult s3eUniversalLinksInit_platform()
 {
@@ -39,10 +40,15 @@ s3eResult s3eUniversalLinksInit_platform()
         goto fail;
 
     // Get all the extension methods
-    g_s3eUniversalLinksTest = env->GetMethodID(cls, "s3eUniversalLinksTest", "(Ljava/lang/String;)I");
-    if (!g_s3eUniversalLinksTest)
+    /*
+    g_s3eUniversalLinksRegister = env->GetMethodID(cls, "s3eUniversalLinksRegister", "(LFIXME;LFIXME;LFIXME;)I");
+    if (!g_s3eUniversalLinksRegister)
         goto fail;
 
+    g_s3eUniversalLinksUnRegister = env->GetMethodID(cls, "s3eUniversalLinksUnRegister", "(LFIXME;LFIXME;)I");
+    if (!g_s3eUniversalLinksUnRegister)
+        goto fail;
+    */
 
 
     IwTrace(UNIVERSALLINKS ("s3eUniversalLinks init success"));
@@ -76,9 +82,14 @@ void s3eUniversalLinksTerminate_platform()
     g_Obj = NULL;
 }
 
-s3eResult s3eUniversalLinksTest_platform(const char* str)
+s3eResult s3eUniversalLinksRegister_platform(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData)
 {
     JNIEnv* env = s3eEdkJNIGetEnv();
-    jstring str_jstr = env->NewStringUTF(str);
-    return (s3eResult)env->CallIntMethod(g_Obj, g_s3eUniversalLinksTest, str_jstr);
+    return (s3eResult)env->CallIntMethod(g_Obj, g_s3eUniversalLinksRegister, cid, fn, userData);
+}
+
+s3eResult s3eUniversalLinksUnRegister_platform(s3eUniversalLinksCallback cbid, s3eCallback fn)
+{
+    JNIEnv* env = s3eEdkJNIGetEnv();
+    return (s3eResult)env->CallIntMethod(g_Obj, g_s3eUniversalLinksUnRegister, cbid, fn);
 }

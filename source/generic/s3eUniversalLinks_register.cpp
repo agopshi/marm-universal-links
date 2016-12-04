@@ -10,7 +10,6 @@
  * to nothing if this extension is not enabled in the loader
  * at build time.
  */
-#include "IwDebug.h"
 #include "s3eUniversalLinks_autodefs.h"
 #include "s3eEdk.h"
 #include "s3eUniversalLinks.h"
@@ -19,31 +18,18 @@ extern s3eResult s3eUniversalLinksInit();
 extern void s3eUniversalLinksTerminate();
 
 
-// On platforms that use a seperate UI/OS thread we can autowrap functions
-// here.   Note that we can't use the S3E_USE_OS_THREAD define since this
-// code is oftern build standalone, outside the main loader build.
-#if defined I3D_OS_IPHONE || defined I3D_OS_TVOS ||defined I3D_OS_OSX || defined I3D_OS_LINUX || defined I3D_OS_WINDOWS
-
-static s3eResult s3eUniversalLinksTest_wrap(const char* str)
-{
-    IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks func on main thread: s3eUniversalLinksTest"));
-    return (s3eResult)(intptr_t)s3eEdkThreadRunOnOS((s3eEdkThreadFunc)s3eUniversalLinksTest, 1, str);
-}
-#define s3eUniversalLinksTest s3eUniversalLinksTest_wrap
-
-
-#endif
-
 void s3eUniversalLinksRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[1];
-    funcPtrs[0] = (void*)s3eUniversalLinksTest;
+    void* funcPtrs[3];
+    funcPtrs[0] = (void*)s3eUniversalLinksHook;
+    funcPtrs[1] = (void*)s3eUniversalLinksRegister;
+    funcPtrs[2] = (void*)s3eUniversalLinksUnRegister;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[1] = { 0 };
+    int flags[3] = { 0 };
 
     /*
      * Register the extension

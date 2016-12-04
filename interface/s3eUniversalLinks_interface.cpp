@@ -66,21 +66,61 @@ s3eBool s3eUniversalLinksAvailable()
     return g_GotExt ? S3E_TRUE : S3E_FALSE;
 }
 
-s3eResult s3eUniversalLinksTest(const char* str)
+s3eResult s3eUniversalLinksHook()
 {
-    IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks[0] func: s3eUniversalLinksTest"));
+    IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks[0] func: s3eUniversalLinksHook"));
 
     if (!_extLoad())
         return S3E_RESULT_ERROR;
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksTest);
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksHook);
 #endif
 
-    s3eResult ret = g_Ext.m_s3eUniversalLinksTest(str);
+    s3eResult ret = g_Ext.m_s3eUniversalLinksHook();
 
 #ifdef LOADER_CALL_LOCK
-    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksTest);
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksHook);
+#endif
+
+    return ret;
+}
+
+s3eResult s3eUniversalLinksRegister(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData)
+{
+    IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks[1] func: s3eUniversalLinksRegister"));
+
+    if (!_extLoad())
+        return S3E_RESULT_ERROR;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksRegister);
+#endif
+
+    s3eResult ret = g_Ext.m_s3eUniversalLinksRegister(cid, fn, userData);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksRegister);
+#endif
+
+    return ret;
+}
+
+s3eResult s3eUniversalLinksUnRegister(s3eUniversalLinksCallback cbid, s3eCallback fn)
+{
+    IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks[2] func: s3eUniversalLinksUnRegister"));
+
+    if (!_extLoad())
+        return S3E_RESULT_ERROR;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksUnRegister);
+#endif
+
+    s3eResult ret = g_Ext.m_s3eUniversalLinksUnRegister(cbid, fn);
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksUnRegister);
 #endif
 
     return ret;

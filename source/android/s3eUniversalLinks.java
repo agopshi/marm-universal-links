@@ -15,8 +15,14 @@ import com.ideaworks3d.marmalade.LoaderAPI;
 
 class s3eUniversalLinks
 {
-    public int s3eUniversalLinksTest(String str)
+    /*
+    public int s3eUniversalLinksRegister(FIXME cid, FIXME fn, FIXME userData)
     {
         return 0;
     }
+    public int s3eUniversalLinksUnRegister(FIXME cbid, FIXME fn)
+    {
+        return 0;
+    }
+    */
 }
