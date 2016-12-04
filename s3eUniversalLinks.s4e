@@ -1,0 +1,5 @@
+include:
+#include <s3eTypes.h>
+  
+functions:
+s3eResult s3eUniversalLinksTest(const char* str) S3E_RESULT_ERROR run_on_os_thread

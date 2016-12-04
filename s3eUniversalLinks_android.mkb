@@ -1,0 +1,17 @@
+#!/usr/bin/env mkb
+# Builder mkb file for the s3eUniversalLinks extension on android
+platform LINUX
+
+buildtype (SCONS, ARM)
+
+define S3E_ANDROID
+
+options
+{
+    dll
+    output-name="lib/android/libs3eUniversalLinks.so"
+    output-name-debug="lib/android/libs3eUniversalLinks_d.so"
+}
+define S3E_BUILD_EXT
+
+subproject s3eUniversalLinks_build
