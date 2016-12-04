@@ -20,9 +20,11 @@ void s3eUniversalLinksTerminate_platform()
 
 s3eResult s3eUniversalLinksHook_platform()
 {
-    return S3E_RESULT_ERROR;
+    return S3E_RESULT_SUCCESS;
 }
 
+// Platform-agnostic.
+/*
 s3eResult s3eUniversalLinksRegister_platform(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData)
 {
     return S3E_RESULT_ERROR;
@@ -32,3 +34,4 @@ s3eResult s3eUniversalLinksUnRegister_platform(s3eUniversalLinksCallback cbid, s
 {
     return S3E_RESULT_ERROR;
 }
+*/

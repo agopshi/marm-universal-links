@@ -44,9 +44,9 @@ void s3eUniversalLinksTerminate();
 void s3eUniversalLinksTerminate_platform();
 s3eResult s3eUniversalLinksHook_platform();
 
-s3eResult s3eUniversalLinksRegister_platform(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData);
-
-s3eResult s3eUniversalLinksUnRegister_platform(s3eUniversalLinksCallback cbid, s3eCallback fn);
+// Platform-agnostic.
+//s3eResult s3eUniversalLinksRegister_platform(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData);
+//s3eResult s3eUniversalLinksUnRegister_platform(s3eUniversalLinksCallback cbid, s3eCallback fn);
 
 
 #endif /* !S3EUNIVERSALLINKS_INTERNAL_H */

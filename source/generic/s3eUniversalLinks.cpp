@@ -30,10 +30,10 @@ s3eResult s3eUniversalLinksHook()
 
 s3eResult s3eUniversalLinksRegister(s3eUniversalLinksCallback cid, s3eCallback fn, void* userData)
 {
-	return s3eUniversalLinksRegister_platform(cid, fn, userData);
+	return (s3eResult)s3eEdkCallbacksRegister(S3E_EXT_UNIVERSALLINKS_HASH, S3E_UNIVERSAL_LINKS_CALLBACK_MAX, cid, fn, userData, S3E_FALSE);
 }
 
 s3eResult s3eUniversalLinksUnRegister(s3eUniversalLinksCallback cbid, s3eCallback fn)
 {
-	return s3eUniversalLinksUnRegister_platform(cbid, fn);
+	return (s3eResult)s3eEdkCallbacksUnRegister(S3E_EXT_UNIVERSALLINKS_HASH, S3E_UNIVERSAL_LINKS_CALLBACK_MAX, cbid, fn);
 }
