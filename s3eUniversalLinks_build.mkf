@@ -34,6 +34,7 @@ if {{defined I3D_OS_IPHONE}}
         ["source"]
         (use_first_found, source/iphone, source/generic)
         s3eUniversalLinks_platform.mm
+        s3eUniversalLinks_debug.mm
         #Add any iphone-specific files here
     }
 }

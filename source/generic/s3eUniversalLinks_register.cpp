@@ -31,15 +31,16 @@ s3eResult s3eUniversalLinksUnRegister(s3eUniversalLinksCallback cbid, s3eCallbac
 void s3eUniversalLinksRegisterExt()
 {
     /* fill in the function pointer struct for this extension */
-    void* funcPtrs[3];
+    void* funcPtrs[4];
     funcPtrs[0] = (void*)s3eUniversalLinksRegister;
     funcPtrs[1] = (void*)s3eUniversalLinksUnRegister;
     funcPtrs[2] = (void*)s3eUniversalLinksHook;
+    funcPtrs[3] = (void*)s3eUniversalLinksGetInitialUrl;
 
     /*
      * Flags that specify the extension's use of locking and stackswitching
      */
-    int flags[3] = { 0 };
+    int flags[4] = { 0 };
 
     /*
      * Register the extension

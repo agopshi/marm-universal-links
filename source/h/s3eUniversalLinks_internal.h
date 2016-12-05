@@ -44,5 +44,7 @@ void s3eUniversalLinksTerminate();
 void s3eUniversalLinksTerminate_platform();
 s3eResult s3eUniversalLinksHook_platform();
 
+const char* s3eUniversalLinksGetInitialUrl_platform();
+
 
 #endif /* !S3EUNIVERSALLINKS_INTERNAL_H */
