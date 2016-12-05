@@ -18,9 +18,9 @@ typedef enum s3eUniversalLinksCallback
 	 * Called when the application is opened in response to a universal link.
 	 * systemData: char* url
 	 */
-	S3EUNIVERSALLINKS_CALLBACK_OPEN =  0,
+	S3E_UNIVERSALLINKS_CALLBACK_OPEN =  0,
 
-	S3EUNIVERSALLINKS_CALLBACK_MAX
+	S3E_UNIVERSALLINKS_CALLBACK_MAX
 } s3eUniversalLinksCallback;
 
 functions:
