@@ -7,6 +7,8 @@
  * be overwritten (unless --force is specified) and is intended to be modified.
  */
 #include "s3eUniversalLinks_internal.h"
+
+#include "s3eEdk.h"
 #include "s3eEdk_iphone.h"
 
 #include "IwDebug.h"
@@ -23,6 +25,7 @@
 	However, we may be able to get around that using the Objective C runtime to add our own implementation at runtime.
  */
 
+/*
 void inspectAppDelegate()
 {
 	Class s3eAppDelegate = objc_getClass("s3eAppDelegate");
@@ -54,6 +57,7 @@ void inspectAppDelegate()
 		IwTrace(UNIVERSALLINKS_VERBOSE, ("Could not get s3eAppDelegate"));
 	}
 }
+*/
 
 /*
 - (BOOL)application:(UIApplication *)application 
@@ -72,7 +76,12 @@ BOOL continueUserActivityImp(id self, SEL _cmd, UIApplication* application, NSUs
 		
 		IwTrace(UNIVERSALLINKS_VERBOSE, ("Got URL: %s", urlCStr));
 		
-		// TODO: Call application-registered callback.
+		s3eEdkCallbacksEnqueue(
+			S3E_EXT_UNIVERSALLINKS_HASH,
+			S3E_UNIVERSALLINKS_CALLBACK_OPEN,
+			(void*)urlCStr,
+			strlen(urlCStr) + 1
+		);
 	}
 	
 	return YES;
