@@ -174,4 +174,5 @@ s3eResult s3eUniversalLinksHook_platform()
 	// This isn't actually used on iOS because we need to hook into the app delegate
 	// way before any of the app code gets a chance to run.
 	return S3E_RESULT_SUCCESS;
+const char* s3eUniversalLinksGetInitialUrl_platform()
 }

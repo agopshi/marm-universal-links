@@ -8,6 +8,7 @@
 typedef  s3eResult(*s3eUniversalLinksRegister_t)(s3eUniversalLinksCallback cbid, s3eCallback fn, void* userData);
 typedef  s3eResult(*s3eUniversalLinksUnRegister_t)(s3eUniversalLinksCallback cbid, s3eCallback fn);
 typedef  s3eResult(*s3eUniversalLinksHook_t)();
+typedef const char*(*s3eUniversalLinksGetInitialUrl_t)();
 
 /**
  * struct that gets filled in by s3eUniversalLinksRegister
@@ -17,4 +18,5 @@ typedef struct s3eUniversalLinksFuncs
     s3eUniversalLinksRegister_t m_s3eUniversalLinksRegister;
     s3eUniversalLinksUnRegister_t m_s3eUniversalLinksUnRegister;
     s3eUniversalLinksHook_t m_s3eUniversalLinksHook;
+    s3eUniversalLinksGetInitialUrl_t m_s3eUniversalLinksGetInitialUrl;
 } s3eUniversalLinksFuncs;

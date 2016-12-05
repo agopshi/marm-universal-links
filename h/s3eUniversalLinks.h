@@ -83,6 +83,13 @@ s3eResult s3eUniversalLinksUnRegister(s3eUniversalLinksCallback cbid, s3eCallbac
  */
 s3eResult s3eUniversalLinksHook();
 
+/**
+ * Return the initial URL that was used when launching the app. Callbacks aren't called
+ * during app launch, so this method allows you to retrieve that information manually.
+ * @return The initial URL as a NULL-terminated string, or NULL if there wasn't an initial URL.
+ */
+const char* s3eUniversalLinksGetInitialUrl();
+
 // \cond HIDDEN_DEFINES
 S3E_END_C_DECL
 // \endcond

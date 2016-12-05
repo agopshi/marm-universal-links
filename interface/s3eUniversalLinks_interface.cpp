@@ -125,3 +125,23 @@ s3eResult s3eUniversalLinksHook()
 
     return ret;
 }
+
+const char* s3eUniversalLinksGetInitialUrl()
+{
+    IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks[3] func: s3eUniversalLinksGetInitialUrl"));
+
+    if (!_extLoad())
+        return;
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksGetInitialUrl);
+#endif
+
+    const char* ret = g_Ext.m_s3eUniversalLinksGetInitialUrl();
+
+#ifdef LOADER_CALL_LOCK
+    s3eDeviceLoaderCallDone(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksGetInitialUrl);
+#endif
+
+    return ret;
+}
