@@ -91,22 +91,19 @@ s3eResult hookAppDelegateContinueUserActivity()
 {
 	IwTrace(UNIVERSALLINKS_VERBOSE, ("Hooking application:continueUserActivity:restorationHandler: of app delegate"));
 	
-	// We could do this, but using [app.delegate class] seems safer.
-	// 
-	// Class s3eAppDelegate = objc_getClass("s3eAppDelegate");
-	// 
-	// if (s3eAppDelegate == nil)
-	// {
-	// 	IwTrace(UNIVERSALLINKS, ("objc_getClass returned nil for s3eAppDelegate"));
-	// 	return S3E_RESULT_ERROR;
-	// }
+	Class appDelegateClass = objc_getClass("s3eAppDelegate");
 	
-	UIApplication* app = s3eEdkGetUIApplication();
+	if (appDelegateClass == nil)
+	{
+		IwTrace(UNIVERSALLINKS, ("objc_getClass returned nil for s3eAppDelegate"));
+		return S3E_RESULT_ERROR;
+	}
 	
-	Class appDelegateClass = [app.delegate class];
+	//UIApplication* app = s3eEdkGetUIApplication();
+	//Class appDelegateClass = [app.delegate class];
 	
 	// Should be s3eAppDelegate.
-	IwTrace(UNIVERSALLINKS_VERBOSE, ("App delegate class: %s", class_getName(appDelegateClass)));
+	//IwTrace(UNIVERSALLINKS_VERBOSE, ("App delegate class: %s", class_getName(appDelegateClass)));
 	
 	SEL continueUserActivitySel = @selector(application:continueUserActivity:restorationHandler:);
 	//sel_registerName("application:continueUserActivity:restorationHandler:");
@@ -141,7 +138,10 @@ s3eResult s3eUniversalLinksInit_platform()
 	// The following call is helpful when debugging.
 	//inspectAppDelegate();
 	
-	return hookAppDelegateContinueUserActivity();
+	// We're actually doing the hooking in s3eUniversalLinksHook().
+	//return hookAppDelegateContinueUserActivity();
+	
+	return S3E_RESULT_SUCCESS;
 }
 
 void s3eUniversalLinksTerminate_platform()
@@ -150,5 +150,5 @@ void s3eUniversalLinksTerminate_platform()
 
 s3eResult s3eUniversalLinksHook_platform()
 {
-	return S3E_RESULT_SUCCESS;
+	return hookAppDelegateContinueUserActivity();
 }
