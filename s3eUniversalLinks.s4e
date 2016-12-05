@@ -38,4 +38,4 @@ s3eResult s3eUniversalLinksHook() S3E_RESULT_ERROR
  * during app launch, so this method allows you to retrieve that information manually.
  * @return The initial URL as a NULL-terminated string, or NULL if there wasn't an initial URL.
  */
-const char* s3eUniversalLinksGetInitialUrl()
+const char* s3eUniversalLinksGetInitialUrl() NULL

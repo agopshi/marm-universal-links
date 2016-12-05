@@ -30,5 +30,5 @@ s3eResult s3eUniversalLinksHook()
 
 const char* s3eUniversalLinksGetInitialUrl()
 {
-	s3eUniversalLinksGetInitialUrl_platform();
+	return s3eUniversalLinksGetInitialUrl_platform();
 }

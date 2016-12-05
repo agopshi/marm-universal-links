@@ -131,7 +131,7 @@ const char* s3eUniversalLinksGetInitialUrl()
     IwTrace(UNIVERSALLINKS_VERBOSE, ("calling s3eUniversalLinks[3] func: s3eUniversalLinksGetInitialUrl"));
 
     if (!_extLoad())
-        return;
+        return NULL;
 
 #ifdef LOADER_CALL_LOCK
     s3eDeviceLoaderCallStart(S3E_TRUE, (void*)g_Ext.m_s3eUniversalLinksGetInitialUrl);
