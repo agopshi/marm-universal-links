@@ -7,6 +7,7 @@
  * be overwritten (unless --force is specified) and is intended to be modified.
  */
 #include "s3eUniversalLinks_internal.h"
+#include "s3eEdk_iphone.h"
 
 #include "IwDebug.h"
 
@@ -79,17 +80,27 @@ BOOL continueUserActivityImp(id self, SEL _cmd, UIApplication* application, NSUs
 
 s3eResult hookAppDelegateContinueUserActivity()
 {
-	IwTrace(UNIVERSALLINKS_VERBOSE, ("Hooking application:continueUserActivity:restorationHandler: of s3eAppDelegate"));
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("Hooking application:continueUserActivity:restorationHandler: of app delegate"));
 	
-	Class s3eAppDelegate = objc_getClass("s3eAppDelegate");
+	// We could do this, but using [app.delegate class] seems safer.
+	// 
+	// Class s3eAppDelegate = objc_getClass("s3eAppDelegate");
+	// 
+	// if (s3eAppDelegate == nil)
+	// {
+	// 	IwTrace(UNIVERSALLINKS, ("objc_getClass returned nil for s3eAppDelegate"));
+	// 	return S3E_RESULT_ERROR;
+	// }
 	
-	if (s3eAppDelegate == nil)
-	{
-		IwTrace(UNIVERSALLINKS, ("objc_getClass returned nil for s3eAppDelegate"));
-		return S3E_RESULT_ERROR;
-	}
+	UIApplication* app = s3eEdkGetUIApplication();
 	
-	SEL continueUserActivitySel = sel_registerName("application:continueUserActivity:restorationHandler:");
+	Class appDelegateClass = [app.delegate class];
+	
+	// Should be s3eAppDelegate.
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("App delegate class: %s", class_getName(appDelegateClass)));
+	
+	SEL continueUserActivitySel = @selector(application:continueUserActivity:restorationHandler:);
+	//sel_registerName("application:continueUserActivity:restorationHandler:");
 	
 	// Types of continueUserActivityImp, starting with the return type.
 	NSString* types =[
@@ -104,10 +115,8 @@ s3eResult hookAppDelegateContinueUserActivity()
 	
 	const char* typesCStr = [types UTF8String];
 	
-	IwTrace(UNIVERSALLINKS_VERBOSE, ("Types string: %s", typesCStr));
-	
 	BOOL success = class_addMethod(
-		s3eAppDelegate,
+		appDelegateClass,
 		continueUserActivitySel,
 		(IMP)continueUserActivityImp,
 		typesCStr
