@@ -18,44 +18,95 @@
 #import <UIKit/UIKit.h>
 
 /*
-	In order to receive URLs, we need our AppDelegate to implement application:continueUserActivity:restorationHandler:.
+	In order to receive URLs, we need our AppDelegate to implement application:continueUserActivity:restorationHandler: and return YES from application:didFinishLaunchingWithOptions:.
 	
-	Unfortunately, Marmalade doesn't expose its AppDelegate implementation, so we're stuck with whatever has been exposed as a s3eEdkCallback (e.g. S3E_EDK_IPHONE_HANDLEOPENURL for the deprecated direct deep links functionality).
+	Unfortunately, Marmalade doesn't expose its AppDelegate implementation, so we're stuck with whatever has been exposed as an s3eEdkCallback (e.g. S3E_EDK_IPHONE_HANDLEOPENURL for the deprecated direct deep links functionality).
 	
-	However, we may be able to get around that using the Objective C runtime to add our own implementation at runtime.
- */
+	However, we may be able to get around that using the Objective C runtime to add our own implementation at runtime. Continue reading below.
+*/
 
-/*
+// For debugging.
+void inspectClass(Class cls)
+{
+	const char* clsName = class_getName(cls);
+	
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("Inspecting class %s", clsName));
+	
+	uint32 numMethods = 0;
+	Method* methods = class_copyMethodList(cls, &numMethods);
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("Class %s has %u methods", clsName, numMethods));
+	
+	if (methods)
+	{
+		for (uint32 i = 0; i < numMethods; ++i)
+		{
+			Method method = methods[i];
+			SEL sel = method_getName(method);
+			const char* name = sel_getName(sel);
+			
+			IwTrace(UNIVERSALLINKS_VERBOSE, ("%s method: %s", clsName, name));
+		}
+		free(methods);
+	}
+	
+	uint32 numProperties = 0;
+	objc_property_t* properties = class_copyPropertyList(cls, &numProperties);
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("%s has %u properties", clsName, numProperties));
+	
+	if (properties)
+	{
+		for (uint32 i = 0; i < numProperties; ++i)
+		{
+			objc_property_t property = properties[i];
+			const char* name = property_getName(property);
+			
+			IwTrace(UNIVERSALLINKS_VERBOSE, ("%s property: %s", clsName, name));
+		}
+		free(properties);
+	}
+	
+	uint32 numIVars = 0;
+	Ivar* iVars = class_copyIvarList(cls, &numIVars);
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("%s has %u ivars", clsName, numIVars));
+	
+	if (iVars)
+	{
+		for (uint32 i = 0; i < numIVars; ++i)
+		{
+			Ivar ivar = iVars[i];
+			const char* name = ivar_getName(ivar);
+			
+			IwTrace(UNIVERSALLINKS_VERBOSE, ("%s ivar: %s", clsName, name));
+		}
+		free(iVars);
+	}
+}
+
 void inspectAppDelegate()
 {
-	Class s3eAppDelegate = objc_getClass("s3eAppDelegate");
+	Class appDelegateClass = objc_getClass("s3eAppDelegate");
 	
-	if (s3eAppDelegate != nil)
+	if (appDelegateClass != nil)
 	{
-		IwTrace(UNIVERSALLINKS_VERBOSE, ("Got s3eAppDelegate"));
-		
-		uint32 numMethods = 0;
-		Method* methods = class_copyMethodList(s3eAppDelegate, &numMethods);
-		
-		IwTrace(UNIVERSALLINKS_VERBOSE, ("s3eAppDelegate has %u methods", numMethods));
-		
-		if (methods != NULL)
-		{
-			for (uint32 i = 0; i < numMethods; ++i)
-			{
-				Method method = methods[i];
-				SEL sel = method_getName(method);
-				const char* name = sel_getName(sel);
-				
-				IwTrace(UNIVERSALLINKS_VERBOSE, ("s3eAppDelegate method: %s", name));
-			}
-			free(methods);
-		}
+		inspectClass(appDelegateClass);
 	}
 	else
 	{
 		IwTrace(UNIVERSALLINKS_VERBOSE, ("Could not get s3eAppDelegate"));
 	}
+}
+
+/*
+See http://stackoverflow.com/a/33784117/4237824.
+
+- (BOOL)application:(UIApplication *)application 
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions;
+
+BOOL didFinishLaunchingWithOptionsImpl(id self, SEL _cmd, UIApplication* application, NSDictionary* launchOptions)
+{
+	// See http://stackoverflow.com/a/4294832/4237824. If we were to implement this method,
+	// we would have to exchange its implementation with the original one, then call
+	// the original one here, and, lastly, return YES no matter what.
 }
 */
 
@@ -99,11 +150,12 @@ s3eResult hookAppDelegateContinueUserActivity()
 		return S3E_RESULT_ERROR;
 	}
 	
-	//UIApplication* app = s3eEdkGetUIApplication();
-	//Class appDelegateClass = [app.delegate class];
+	// We could also fetch the app delegate class like this, but this might not be safe
+	// in case the application hasn't been fully initialized yet.
+	// UIApplication* app = s3eEdkGetUIApplication();
+	// Class appDelegateClass = [app.delegate class];
 	
-	// Should be s3eAppDelegate.
-	//IwTrace(UNIVERSALLINKS_VERBOSE, ("App delegate class: %s", class_getName(appDelegateClass)));
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("App delegate class (should be s3eAppDelegate): %s", class_getName(appDelegateClass)));
 	
 	SEL continueUserActivitySel = @selector(application:continueUserActivity:restorationHandler:);
 	//sel_registerName("application:continueUserActivity:restorationHandler:");
@@ -135,13 +187,10 @@ s3eResult hookAppDelegateContinueUserActivity()
 
 s3eResult s3eUniversalLinksInit_platform()
 {
-	// The following call is helpful when debugging.
+	// Helpful when debugging.
 	//inspectAppDelegate();
 	
-	// We're actually doing the hooking in s3eUniversalLinksHook().
-	//return hookAppDelegateContinueUserActivity();
-	
-	return S3E_RESULT_SUCCESS;
+	return hookAppDelegateContinueUserActivity();
 }
 
 void s3eUniversalLinksTerminate_platform()
@@ -150,5 +199,5 @@ void s3eUniversalLinksTerminate_platform()
 
 s3eResult s3eUniversalLinksHook_platform()
 {
-	return hookAppDelegateContinueUserActivity();
+	return S3E_RESULT_SUCCESS;
 }
