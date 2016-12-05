@@ -158,6 +158,8 @@ int g_s3eUniversalLinksHookResult = hookAppDelegateContinueUserActivity();
 
 s3eResult s3eUniversalLinksInit_platform()
 {
+	isInitialized = true;
+	
 	// Helpful when debugging.
 	//inspectAppDelegate();
 	
