@@ -28,12 +28,12 @@ void inspectAppDelegate()
 	
 	if (s3eAppDelegate != nil)
 	{
-		IwTrace(UNIVERSALLINKS, ("Got s3eAppDelegate"));
+		IwTrace(UNIVERSALLINKS_VERBOSE, ("Got s3eAppDelegate"));
 		
 		uint32 numMethods = 0;
 		Method* methods = class_copyMethodList(s3eAppDelegate, &numMethods);
 		
-		IwTrace(UNIVERSALLINKS, ("%u methods", numMethods));
+		IwTrace(UNIVERSALLINKS_VERBOSE, ("s3eAppDelegate has %u methods", numMethods));
 		
 		if (methods != NULL)
 		{
@@ -43,14 +43,14 @@ void inspectAppDelegate()
 				SEL sel = method_getName(method);
 				const char* name = sel_getName(sel);
 				
-				IwTrace(UNIVERSALLINKS, ("Method: %s", name));
+				IwTrace(UNIVERSALLINKS_VERBOSE, ("s3eAppDelegate method: %s", name));
 			}
 			free(methods);
 		}
 	}
 	else
 	{
-		IwTrace(UNIVERSALLINKS, ("Could not get s3eAppDelegate"));
+		IwTrace(UNIVERSALLINKS_VERBOSE, ("Could not get s3eAppDelegate"));
 	}
 }
 
@@ -59,9 +59,22 @@ void inspectAppDelegate()
 continueUserActivity:(NSUserActivity *)userActivity 
  restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler;
  */
-void continueUserActivityImp(id self, SEL _cmd, UIApplication* application, NSUserActivity* userActivity, void (^restorationHandler)(NSArray *restorableObjects))
+BOOL continueUserActivityImp(id self, SEL _cmd, UIApplication* application, NSUserActivity* userActivity, void (^restorationHandler)(NSArray* restorableObjects))
 {
 	IwTrace(UNIVERSALLINKS_VERBOSE, ("Called application:continueUserActivity:restorationHandler:"));
+	
+	if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb])
+	{
+		NSString* url = [userActivity.webpageURL absoluteString];
+		
+		const char* urlCStr = [url UTF8String];
+		
+		IwTrace(UNIVERSALLINKS_VERBOSE, ("Got URL: %s", urlCStr));
+		
+		// TODO: Call application-registered callback.
+	}
+	
+	return YES;
 }
 
 s3eResult hookAppDelegateContinueUserActivity()
@@ -78,20 +91,36 @@ s3eResult hookAppDelegateContinueUserActivity()
 	
 	SEL continueUserActivitySel = sel_registerName("application:continueUserActivity:restorationHandler:");
 	
+	// Types of continueUserActivityImp, starting with the return type.
+	NSString* types =[
+		NSString stringWithFormat:@"%s%s%s%s%s%s",
+		@encode(BOOL),
+		@encode(id),
+		@encode(SEL),
+		@encode(UIApplication*),
+		@encode(NSUserActivity*),
+		@encode(void (^)(NSArray*))
+	];
+	
+	const char* typesCStr = [types UTF8String];
+	
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("Types string: %s", typesCStr));
+	
 	BOOL success = class_addMethod(
 		s3eAppDelegate,
 		continueUserActivitySel,
 		(IMP)continueUserActivityImp,
-		"v@:"
+		typesCStr
 	);
 	
-	IwTrace(UNIVERSALLINKS_VERBOSE, ("Hooked? %s", success ? "yes" : "no"));
+	IwTrace(UNIVERSALLINKS_VERBOSE, ("Hooked? %d", success));
 	
 	return success ? S3E_RESULT_SUCCESS : S3E_RESULT_ERROR;
 }
 
 s3eResult s3eUniversalLinksInit_platform()
 {
+	// The following call is helpful when debugging.
 	//inspectAppDelegate();
 	
 	return hookAppDelegateContinueUserActivity();
