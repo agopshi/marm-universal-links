@@ -1,0 +1,34 @@
+callbacks
+
+include:
+
+#include <s3eTypes.h>
+
+/**
+ * s3eUniversalLinks callbacks.
+ *
+ * @see s3eUniversalLinksRegister
+ * @see s3eUniversalLinksUnRegister
+ * @par Required Header Files
+ * s3eUniversalLinks.h
+ */
+typedef enum s3eUniversalLinksCallback
+{
+	/**
+	 * Called when the application is opened in response to a universal link.
+	 * systemData: char* url
+	 */
+	S3E_UNIVERSALLINKS_CALLBACK_OPEN =  0,
+
+	S3E_UNIVERSALLINKS_CALLBACK_MAX
+} s3eUniversalLinksCallback;
+
+functions:
+
+/**
+ * Hook whatever is necessary to make universal links work. Call this during app initialization.
+ * @return
+ * - #S3E_RESULT_SUCCESS if no error occurred.
+ * - #S3E_RESULT_ERROR if the operation failed.
+ */
+s3eResult s3eUniversalLinksHook() S3E_RESULT_ERROR
